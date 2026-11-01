@@ -1,0 +1,16 @@
+# 源码在 Linux / WSL 下用 Theos 编译，统一 LF，避免 CRLF 导致的编译失败
+* text=auto eol=lf
+
+*.xm        text eol=lf
+*.m         text eol=lf
+*.h         text eol=lf
+*.plist     text eol=lf
+*.strings   text eol=lf
+*.sh        text eol=lf
+Makefile*   text eol=lf
+control*    text eol=lf
+*.tbd       text eol=lf
+*.md        text eol=lf
+
+*.png       binary
+*.deb       binary

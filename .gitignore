@@ -1,0 +1,20 @@
+# Theos 构建产物
+.theos/
+packages/
+obj/
+build/
+*.deb
+*.dylib
+
+# 编译中间产物
+*.o
+*.a
+*.dSYM/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/

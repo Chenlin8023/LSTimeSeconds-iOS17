@@ -1,0 +1,16 @@
+"SWITCH_GROUP" = "General";
+"SWITCH_FOOTER" = "Enables seconds display on lockscreen. Format automatically follows device system 12/24 hour settings.";
+"ENABLE_TWEAK" = "Enable Tweak & Seconds";
+"ENABLE_INFO" = "Displays real-time seconds on the lock screen clock.";
+
+"LAYOUT_GROUP" = "Clock Size & Position";
+"LAYOUT_FOOTER" = "Scale is based on original poster font size (0.88 recommended).\nVertical Position lets you move the clock up (negative) or down (positive).";
+"FONT_SCALE_LABEL" = "Clock Size Scale";
+"Y_OFFSET_LABEL" = "Vertical Position Offset";
+
+"AOD_NOTICE_GROUP" = "Always-On Display (AOD) Notice";
+"AOD_NOTICE_FOOTER" = "[Always-On Display (AOD) Not Supported]\nDue to iOS 17 hardware locking AOD refresh rate to 1Hz and throttling UI updates to conserve battery, real-time seconds are not updated during AOD dim mode.\n\nTimer automatically pauses when the screen dims/sleeps, and resumes immediately when the screen wakes up.";
+
+"ACTION_GROUP" = "Actions";
+"RESPRING" = "Respring SpringBoard";
+"FOOTER_CREDITS" = "LSTimeSeconds iOS 17 Stable Edition\nRootHide Native arm64e";
