@@ -7,7 +7,13 @@
 > 实测设备：**iPhone 15 Pro / iOS 17.2.1 / RootHide 越狱**
 > 状态：亮屏锁屏下秒数每秒递增、字号与垂直位置可调、长按进入壁纸编辑不再冲突。
 
-**当前版本：v0.0.8**（源码可完整自编译，设置面板也是本仓库源码编出来的）
+**当前版本：v0.0.7**（真机验证通过的稳定版；只发布实机跑通过的构建）
+
+> ⚠️ **v0.0.8 已撤回**：该版本把设置面板换成了本仓库自建的 `PSListController` 子类，
+> 锁屏秒数功能正常，但**进入「设置 → LSTimeSeconds」会闪退**。
+> 现已回退到验证过的面板，版本号回到 `0.0.7-1`。经过见
+> [`docs/05-版本与设置面板说明.md`](docs/05-版本与设置面板说明.md)。
+> 装过 0.0.8 的请在 Sileo 里选择版本 `0.0.7-1` 覆盖安装。
 
 ---
 
@@ -141,22 +147,25 @@ Xcode 编的原版这里是 `auth bind`：`diversity=0x6AE1, addrDiv=1, key=2`�
 .
 ├── LSTimeSeconds.xm            # 动态库主逻辑（Hook / 定时器 / 排版）
 ├── LSTimeSeconds.plist         # MobileLoader 过滤器（仅 springboard）
-├── LSTRootListController.h/.m  # 设置面板控制器（自建，非第三方二进制）
-├── Makefile                    # tweak + bundle 两个 target
+├── Makefile                    # tweak target（面板走 vendor，不编译）
 ├── control                     # Debian 包信息
 ├── build.sh                    # WSL 一键构建（含 arm64e isa 补丁）
 ├── libsubstrate_roothide.tbd   # roothide 版 substrate stub
 ├── layout/                     # 打进包的静态资源（面板 UI 与本地化）
+├── vendor/LSTSPrefs.bundle/    # 验证过的设置面板可执行文件（原版二进制）
+├── experimental/               # 自建面板控制器源码（真机会闪退，未启用）
 ├── tools/make_repo.py          # 生成越狱源索引（Packages / Release）
 └── docs/
     ├── 01-逆向与根因.md
     ├── 02-构建与安装.md
     ├── 03-全天候显示限制.md
-    └── 04-发布越狱源.md
+    ├── 04-发布越狱源.md
+    └── 05-版本与设置面板说明.md
 ```
 
-> `gh-pages` 分支是源站本体（`debs/` + `Packages*` + `Release` + 落地页），
-> 发布新版本的流程见 [`docs/04-发布越狱源.md`](docs/04-发布越狱源.md)。
+> 越狱源统一托管在账号根站 **<https://chenlin8023.github.io/>**（仓库 `Chenlin8023.github.io`），
+> 里面同时收录了其余几个插件。本仓库的 `gh-pages` 分支仍保留单项目源，
+> 发布流程见 [`docs/04-发布越狱源.md`](docs/04-发布越狱源.md)。
 
 
 ## 六、致谢与许可

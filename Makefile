@@ -22,15 +22,10 @@ LSTimeSeconds_CFLAGS = -fobjc-arc -Wall -Wno-unused-function -Wno-unused-variabl
 LSTimeSeconds_OBJCCFLAGS = -fno-modules
 
 # ---------------------------------------------------------------------------
-# 设置面板：自建 PreferenceBundle，可执行文件由本仓库源码编译
+# 设置面板（PreferenceBundle）：
+#   不使用 Theos bundle target —— 面板可执行文件来自 vendor/LSTSPrefs.bundle，
+#   与真机验证过的稳定版完全一致（原因见 build.sh 顶部注释与 docs/05）。
+#   experimental/ 下有本项目自建控制器的源码，真机进入设置会闪退，暂未启用。
 # ---------------------------------------------------------------------------
-BUNDLE_NAME = LSTSPrefs
-LSTSPrefs_FILES = LSTRootListController.m
-LSTSPrefs_INSTALL_PATH = /Library/PreferenceBundles
-LSTSPrefs_FRAMEWORKS = UIKit Foundation
-LSTSPrefs_PRIVATE_FRAMEWORKS = Preferences
-LSTSPrefs_CFLAGS = -fobjc-arc -Wall
-LSTSPrefs_OBJCCFLAGS = -fno-modules
 
 include $(THEOS_MAKE_PATH)/tweak.mk
-include $(THEOS_MAKE_PATH)/bundle.mk

@@ -1,8 +1,8 @@
 Package: com.sini921.lstimeseconds
 Name: LSTimeSeconds(roothide)
-Version: 0.0.8-1
+Version: 0.0.7-1
 Architecture: iphoneos-arm64e
-Description: 为锁屏时钟增加实时秒数。修复 iOS 17 上完全失效的问题，并新增字号缩放与上下位置调节。时间格式跟随设备 12/24 小时制设置。不支持全天候显示(AOD)暗屏走秒，亮屏时实时递增。原生 roothide arm64e。
+Description: 为锁屏时钟增加实时秒数。修复 iOS 17 上完全失效的问题，并为 iPhone 锁屏新增字号缩放与上下位置调节。时间格式跟随设备 12/24 小时制设置。不支持全天候显示(AOD)暗屏走秒，亮屏时实时递增。原生 roothide arm64e。
 Maintainer: b4db1r3 & SINI
 Author: b4db1r3 & SINI
 Section: 越狱插件

@@ -4,14 +4,22 @@
 #
 #    wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-github/build.sh
 #
-#  为什么会话最后一步要「补丁 + 重签」：
-#    SpringBoard（以及 Preferences）是 arm64e 进程。clang 19（L1ghtmann Linux 工具链）
+#  =============================================================================
+#  构建说明
+#
+#  · 锁屏引擎（LSTimeSeconds.dylib）由本仓库 LSTimeSeconds.xm 编译。
+#  · 设置面板可执行文件取自 vendor/LSTSPrefs.bundle —— 与真机验证过的稳定版
+#    完全一致。experimental/ 下的自建控制器（PSListController 子类）在真机
+#    进入设置时会闪退，已停用，勿启用。
+#  =============================================================================
+#
+#  为什么最后一步要「补丁 + 重签」：
+#    SpringBoard 是 arm64e 进程。clang 19（L1ghtmann Linux 工具链）
 #    给 arm64e 编 CFSTR 常量时，__cfstring 的 isa 记的是普通 UNSIGNED 重定位，
 #    ld64 据此在 chained fixups 里写成「无 PAC 的普通 bind」。arm64e 进程里
 #    objc_msgSend 碰到常量字符串接收者要做指针认证 → 未签名即 SIGBUS（安全模式）。
 #    Xcode 编的原版这里是 auth bind：diversity=0x6AE1, addrDiv=1, key=2。
 #    所以链接后必须把 isa 槽逐个改写成同形的 auth bind24，再 ldid 重签。
-#    注意：动态库与设置面板可执行文件两个都要补，Preferences 同样是 arm64e。
 # =============================================================================
 set -u
 
@@ -108,21 +116,27 @@ BNDLDIR="$DST/repack/Library/PreferenceBundles/LSTSPrefs.bundle"
 DYLIB="$DLDIR/LSTimeSeconds.dylib"
 PREFS="$BNDLDIR/LSTSPrefs"
 [ -f "$DYLIB" ] || die "包里没有 LSTimeSeconds.dylib"
+
+# 设置面板可执行文件来自 vendor/（真机验证过的原版面板，已带 isa 认证与签名）。
+# 不要用这里重新编译的版本：自建控制器在真机进入设置时闪退，见 docs/05。
+if [ -f "$DST/vendor/LSTSPrefs.bundle/LSTSPrefs" ]; then
+    mkdir -p "$BNDLDIR"
+    cp "$DST/vendor/LSTSPrefs.bundle/LSTSPrefs" "$PREFS"
+    echo "  已注入 vendor 设置面板可执行文件"
+fi
 [ -f "$PREFS" ] || die "包里没有设置面板可执行文件 LSTSPrefs"
 
 patch_isa "$DYLIB" || die "动态库 isa 补丁失败"
-patch_isa "$PREFS" || die "设置面板 isa 补丁失败"
 
 echo "=== 重签（ldid）与权限 ==="
 "$TC19/ldid" -S "$DYLIB" || die "ldid 签名失败: dylib"
-"$TC19/ldid" -S "$PREFS" || die "ldid 签名失败: prefs"
 chmod 755 "$DYLIB" "$PREFS"
 chmod 644 "$DLDIR/LSTimeSeconds.plist"
 chmod 644 "$BNDLDIR/Root.plist" "$BNDLDIR/Info.plist"
 chmod -R 755 "$BNDLDIR"/*.lproj 2>/dev/null || true
 
 echo "=== 打包 ==="
-FINAL_DEB="$SRC/com.sini921.lstimeseconds_0.0.8-1_iphoneos-arm64e.deb"
+FINAL_DEB="$SRC/com.sini921.lstimeseconds_0.0.7-1_iphoneos-arm64e.deb"
 rm -f "$FINAL_DEB"
 dpkg-deb -b -Zxz "$DST/repack" "$FINAL_DEB" || die "dpkg-deb -b 失败"
 
