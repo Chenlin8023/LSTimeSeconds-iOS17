@@ -74,12 +74,15 @@
 在 **Sileo / Zebra / Cydia** 里添加软件源：
 
 ```
-https://chenlin8023.github.io/LSTimeSeconds-iOS17/
+https://chenlin8023.github.io/
 ```
 
-> 落地页（含一键跳转按钮）：<https://chenlin8023.github.io/LSTimeSeconds-iOS17/>
+> 落地页（含一键跳转按钮）：<https://chenlin8023.github.io/>
 
 添加后刷新源，搜索 **LSTimeSeconds** 即可安装。
+
+> 该源是统一源，同时收录 AppLock+、CallAssist PortLeak、VolumeManager，
+> 装别的插件不用再加源。原单项目源 `/LSTimeSeconds-iOS17/` 已下线。
 
 ### 方式二：直接装 deb
 
@@ -164,7 +167,7 @@ Xcode 编的原版这里是 `auth bind`：`diversity=0x6AE1, addrDiv=1, key=2`�
 ```
 
 > 越狱源统一托管在账号根站 **<https://chenlin8023.github.io/>**（仓库 `Chenlin8023.github.io`），
-> 里面同时收录了其余几个插件。本仓库的 `gh-pages` 分支仍保留单项目源，
+> 里面同时收录了其余几个插件。本仓库只放源码，不单独出源；
 > 发布流程见 [`docs/04-发布越狱源.md`](docs/04-发布越狱源.md)。
 
 
