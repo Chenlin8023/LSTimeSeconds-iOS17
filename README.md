@@ -63,8 +63,21 @@
 
 ## 三、安装
 
-从 [Releases](../../releases) 下载 `release` 里的 deb，用 Sileo / Zebra / Filza 安装，
-然后 **Respring 一次**。
+### 方式一：加源安装（推荐，可自动收到更新）
+
+在 **Sileo / Zebra / Cydia** 里添加软件源：
+
+```
+https://chenlin8023.github.io/LSTimeSeconds-iOS17/
+```
+
+> 落地页（含一键跳转按钮）：<https://chenlin8023.github.io/LSTimeSeconds-iOS17/>
+
+添加后刷新源，搜索 **LSTimeSeconds** 即可安装。
+
+### 方式二：直接装 deb
+
+从 [Releases](../../releases) 下载 deb，用 Sileo / Zebra / Filza 安装，然后 **Respring 一次**。
 
 > ⚠️ 本包是 **RootHide 原生包**（`iphoneos-arm64e`，安装前缀为空）。
 > **直接安装，不要过 RootHide 转换器** —— 转换器会重写二进制并破坏 arm64e 的指针认证。
@@ -134,11 +147,17 @@ Xcode 编的原版这里是 `auth bind`：`diversity=0x6AE1, addrDiv=1, key=2`�
 ├── build.sh                    # WSL 一键构建（含 arm64e isa 补丁）
 ├── libsubstrate_roothide.tbd   # roothide 版 substrate stub
 ├── layout/                     # 打进包的静态资源（面板 UI 与本地化）
+├── tools/make_repo.py          # 生成越狱源索引（Packages / Release）
 └── docs/
     ├── 01-逆向与根因.md
     ├── 02-构建与安装.md
-    └── 03-全天候显示限制.md
+    ├── 03-全天候显示限制.md
+    └── 04-发布越狱源.md
 ```
+
+> `gh-pages` 分支是源站本体（`debs/` + `Packages*` + `Release` + 落地页），
+> 发布新版本的流程见 [`docs/04-发布越狱源.md`](docs/04-发布越狱源.md)。
+
 
 ## 六、致谢与许可
 
