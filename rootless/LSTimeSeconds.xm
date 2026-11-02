@@ -3,6 +3,7 @@
 #import <objc/runtime.h>
 #import <substrate.h>
 #import <math.h>
+#include <sys/stat.h>
 
 static NSString *const kPrefDomain = @"com.b4db1r3.lstsprefs";
 static NSString *const kNotifyReload = @"com.b4db1r3.lstsprefs/reloadPrefs";
@@ -21,8 +22,25 @@ static BOOL g_isScreenOff = NO;
 static const char *kOriginalFontSizeKey = "kOriginalFontSizeKey";
 static const char *kOriginalYOffsetKey = "kOriginalYOffsetKey";
 
-// Diagnostic Logger
+// Diagnostic Logger（文件超过 256KB 轮转为 .1，避免长期使用无限增长）
+static void rotateLogIfNeeded(void) {
+    static time_t lastCheck = 0;
+    time_t now = time(NULL);
+    if (now - lastCheck < 60) return;   // 最多每分钟检查一次
+    lastCheck = now;
+
+    const char *path = "/var/mobile/Library/LSTimeSeconds.log";
+    struct stat st;
+    if (stat(path, &st) != 0 || st.st_size < 256 * 1024) return;
+
+    char oldPath[512];
+    snprintf(oldPath, sizeof(oldPath), "%s.1", path);
+    rename(path, oldPath);             // 覆盖上一份备份
+}
+
 static void writeLog(const char *format, ...) {
+    rotateLogIfNeeded();
+
     va_list args;
     va_start(args, format);
     char buf[1024];
@@ -279,8 +297,12 @@ static void startTimerIfNeeded(void) {
         timerTick();
     }];
     if (g_secondsTimer) {
+        // 对齐到下一个整秒（+10ms 余量），避免与系统时钟相位错开导致秒数跳动不匀
+        NSTimeInterval nowTs = [NSDate timeIntervalSinceReferenceDate];
+        NSTimeInterval delay = 1.0 - fmod(nowTs, 1.0) + 0.01;
+        [g_secondsTimer setFireDate:[NSDate dateWithTimeIntervalSinceNow:delay]];
         [[NSRunLoop mainRunLoop] addTimer:g_secondsTimer forMode:NSRunLoopCommonModes];
-        writeLog("startTimerIfNeeded: Timer running");
+        writeLog("startTimerIfNeeded: Timer running (aligned=%.3f)", delay);
     }
 }
 

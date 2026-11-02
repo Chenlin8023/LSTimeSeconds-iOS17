@@ -19,12 +19,12 @@ bash /mnt/<你的路径>/LSTimeSeconds-iOS17/rootless/build.sh
 产物：
 
 ```
-com.sini921.lstimeseconds_0.0.7-4_iphoneos-arm64.deb
+com.sini921.lstimeseconds_0.0.7-5_iphoneos-arm64.deb
 ```
 
 详细差异、静态验证结果与真机验证清单见
 [`docs/06-rootless适配.md`](docs/06-rootless适配.md)。
 
 > 状态：**真机已验证**（iOS 16.0.3 rootless：熄屏再亮屏秒数恢复、设置面板正常）。
-> 0.0.7-4 是最小改动版：只去掉熄屏状态判断和多余的停表，不引入 block 自愈逻辑。
+> 0.0.7-5 在 0.0.7-4 的冻结修复之上，只增加日志轮转与秒针对齐；刷新/停表逻辑未变。
 > 设置面板与类元数据 PAC 由 `tools/patch_arm64e.py` 处理。

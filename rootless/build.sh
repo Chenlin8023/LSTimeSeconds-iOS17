@@ -20,7 +20,7 @@ export THEOS="$HOME/theos"
 export PATH="$THEOS/bin:$PATH"
 
 SRC=/mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-github/rootless
-DST="$HOME/lsts_rootless_min_build"
+DST="$HOME/lsts_rootless_5_build"
 TC19="$HOME/tc19/linux/iphone/bin"
 
 die() { echo "!! $*"; exit 1; }
@@ -77,7 +77,7 @@ find "$DST/repack/var/jb" -type d -exec chmod 755 {} +
 find "$DST/repack/var/jb" -type f ! -path "$PREFS" ! -path "$DYLIB" -exec chmod 644 {} +
 
 echo "=== 打包 ==="
-FINAL_DEB="$SRC/com.sini921.lstimeseconds_0.0.7-4_iphoneos-arm64.deb"
+FINAL_DEB="$SRC/com.sini921.lstimeseconds_0.0.7-5_iphoneos-arm64.deb"
 rm -f "$FINAL_DEB"
 dpkg-deb -b -Zxz "$DST/repack" "$FINAL_DEB" || die "dpkg-deb -b 失败"
 

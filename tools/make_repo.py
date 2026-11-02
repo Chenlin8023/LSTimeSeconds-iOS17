@@ -102,6 +102,19 @@ def md5_of(path):
 
 # ---------------------------------------------------------------- 索引生成
 
+# 实机验证系统版本备注：追加到每个包的 Description 里，Sileo 详情页可见。
+# 规则：LSTimeSeconds rootless 0.0.7-4/5 在 iOS 16.0.3 验证；其余包在 iOS 17.2.1 验证。
+VERIFY_NOTES = {
+    ("com.sini921.lstimeseconds", "0.0.7-4"): "iOS 16.0.3（rootless）",
+    ("com.sini921.lstimeseconds", "0.0.7-5"): "iOS 16.0.3（rootless）",
+}
+DEFAULT_VERIFY_NOTE = "iOS 17.2.1（RootHide）"
+
+
+def verify_note(pkg, ver):
+    return VERIFY_NOTES.get((pkg, ver), DEFAULT_VERIFY_NOTE)
+
+
 def build_packages(repo_dir):
     debs_dir = os.path.join(repo_dir, "debs")
     if not os.path.isdir(debs_dir):
@@ -130,7 +143,19 @@ def build_packages(repo_dir):
                     if ln.startswith("Package:")), fn)
         ver = next((ln.split(":", 1)[1].strip() for ln in lines
                     if ln.startswith("Version:")), "?")
-        print("  + %-40s %s" % (pkg, ver))
+
+        # 把实机验证版本追加为 Description 的续行（续行以空格开头）
+        note = " 实机验证：%s" % verify_note(pkg, ver)
+        didx = next((i for i, ln in enumerate(lines) if ln.startswith("Description:")), None)
+        if didx is not None:
+            j = didx + 1
+            while j < len(lines) and lines[j].startswith(" "):
+                j += 1
+            lines.insert(j, note)
+        else:
+            lines.append("Description: 实机验证：%s" % note)
+
+        print("  + %-40s %s  [%s]" % (pkg, ver, verify_note(pkg, ver)))
         stanzas.append("\n".join(lines))
 
     return ("\n\n".join(stanzas) + "\n").encode("utf-8")

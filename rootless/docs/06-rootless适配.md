@@ -84,7 +84,7 @@ isa/superclass 认证）→ `ldid -S` 重签 → 统一权限 → 重新打包�
 产物：
 
 ```
-com.sini921.lstimeseconds_0.0.7-4_iphoneos-arm64.deb
+com.sini921.lstimeseconds_0.0.7-5_iphoneos-arm64.deb
 ```
 
 ## 四、静态验证结果
@@ -173,7 +173,19 @@ CSProminentTimeView didMoveToWindow: ON SCREEN
 
 > 0.0.7-4 已在 iOS 16.0.3 真机验证：熄屏再亮屏秒数恢复、设置面板正常。
 
-## 七、版本策略
+## 七、0.0.7-5 优化
+
+只做低风险、不影响刷新逻辑的优化：
+
+- **日志轮转**：`/var/mobile/Library/LSTimeSeconds.log` 超过 256KB 时改名为 `.1`
+  （覆盖上一份备份），避免长期使用无限增长；最多每分钟检查一次。
+- **秒针对齐**：首次创建的 1Hz 计时器对齐到下一个整秒（+10ms 余量），
+  避免计时器相位与系统时钟错开导致秒数跳动不匀。
+- 刷新/停表逻辑与 0.0.7-4 完全一致。
+
+> 0.0.7-5 在 iOS 16.0.3 真机验证（锁屏秒数、熄屏唤醒、设置面板）。
+
+## 八、版本策略
 
 与主仓库一致：**只把真机验证通过的构建放进越狱源**。
 本 rootless 包在通过 iOS 16/17 真机验证前，仅作为测试包，不更新 `https://chenlin8023.github.io/` 的索引。
