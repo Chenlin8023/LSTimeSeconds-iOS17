@@ -15,6 +15,21 @@
 > [`docs/05-版本与设置面板说明.md`](docs/05-版本与设置面板说明.md)。
 > 装过 0.0.8 的请在 Sileo 里选择版本 `0.0.7-1` 覆盖安装。
 
+> 补充（2026-11-02）：0.0.8 闪退的真正原因不是 `PSListController` 写法，也不是 plist 路径，
+> 而是 **clang19/ld64 产出的 arm64e 类元数据缺少 PAC**：`__DATA,__objc_data` 里
+> `class_t.isa` / `superclass` 是普通 bind/rebase，`Preferences` 进程 `dlopen` 时
+> `libobjc readClass` 认证失败 → SIGBUS。修复与验证方法见
+> [`rootless/docs/06-rootless适配.md`](rootless/docs/06-rootless适配.md)。
+
+### rootless 版本（iOS 16–17 / `/var/jb`）
+
+本仓库新增 [`rootless/`](rootless/README.md)：同一份功能源码的 rootless 构建，
+`Architecture: iphoneos-arm64`，安装到 `/var/jb`，面板由源码编译。
+
+- 版本 `0.0.7-2`，已在真机验证（锁屏秒数与设置面板均正常）；
+- 源码、构建脚本、arm64e PAC 补丁器都在 `rootless/`；
+- RootHide 用户继续使用上面的 `0.0.7-1` 原生包，不要混装。
+
 ---
 
 ## 一、原版为什么在 iOS 17 上完全不生效

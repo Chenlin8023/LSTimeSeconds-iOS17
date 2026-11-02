@@ -1,0 +1,16 @@
+"SWITCH_GROUP" = "基础功能";
+"SWITCH_FOOTER" = "开启后锁屏时钟将显示秒数并每秒实时刷新；时间格式默认跟随设备系统 12/24 小时制设置。";
+"ENABLE_TWEAK" = "启用插件与秒数显示";
+"ENABLE_INFO" = "开启即可在锁屏时钟展示实时秒数。";
+
+"LAYOUT_GROUP" = "时钟大小与位置调节";
+"LAYOUT_FOOTER" = "大小缩放以设备原机字号为基准（推荐 0.88）。\n上下位置调节可向上（负值）或向下（正值）移动时钟，突破 iPhone 原生锁屏位置固定的限制。";
+"FONT_SCALE_LABEL" = "时钟大小缩放";
+"Y_OFFSET_LABEL" = "上下位置调节 (负值靠上 / 正值靠下)";
+
+"AOD_NOTICE_GROUP" = "全天候显示 (AOD) 说明";
+"AOD_NOTICE_FOOTER" = "【不支持全天候显示 (AOD)】\n由于 iOS 17 全天候显示硬件机制会将屏幕刷新率强制锁死为 1Hz，且底层 BacklightServices 渲染框架会拦截挂起常规高频界面重绘以保护电池与屏幕寿命，因此本插件不支持在 AOD 常亮暗屏状态下持续走秒。\n\n手机熄屏或进入 AOD 暗屏时，插件将自动停止刷新以防无效耗电；一旦点亮或唤醒屏幕，毫秒级无缝恢复实时秒数递增。";
+
+"ACTION_GROUP" = "快捷操作";
+"RESPRING" = "注销 SpringBoard 生效";
+"FOOTER_CREDITS" = "LSTimeSeconds iOS 16/17 标准稳定版\nrootless（/var/jb）arm64 + arm64e 适配";
