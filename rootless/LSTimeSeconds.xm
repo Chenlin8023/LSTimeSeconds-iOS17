@@ -261,9 +261,8 @@ static void updateAllActiveViews(void) {
 }
 
 static void timerTick(void) {
-    if (g_isScreenOff && pref_aodOptimize) {
-        return;
-    }
+    // 不用 g_isScreenOff 决定是否刷新：iOS 16 的背光/锁屏通知会乱序，
+    // state=2 可能晚于唤醒通知到达并把状态永久卡在 YES。
     if (!pref_enabled) {
         stopTimer();
         return;
@@ -310,11 +309,6 @@ static void unregisterActiveTimeView(UIView *tv) {
     if (g_activeTimeViews && tv) {
         [g_activeTimeViews removeObject:tv];
     }
-    if ([g_activeTimeViews count] == 0 && [g_activeDateViews count] == 0) {
-        if (pref_aodOptimize) {
-            stopTimer();
-        }
-    }
 }
 
 static void registerActiveDateView(UIView *dv) {
@@ -332,11 +326,6 @@ static void registerActiveDateView(UIView *dv) {
 static void unregisterActiveDateView(UIView *dv) {
     if (g_activeDateViews && dv) {
         [g_activeDateViews removeObject:dv];
-    }
-    if ([g_activeTimeViews count] == 0 && [g_activeDateViews count] == 0) {
-        if (pref_aodOptimize) {
-            stopTimer();
-        }
     }
 }
 
@@ -369,9 +358,7 @@ static void onReloadNotification(CFNotificationCenterRef center, void *observer,
 static void onScreenBlanked(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
     g_isScreenOff = YES;
     writeLog("onScreenBlanked: screen off");
-    if (pref_aodOptimize) {
-        stopTimer();
-    }
+    // 不停表：iOS 16 唤醒后不一定会再发 unblank，停表会永久冻结。
 }
 
 static void onScreenUnblanked(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
@@ -607,9 +594,7 @@ static void onScreenUnblanked(CFNotificationCenterRef center, void *observer, CF
     // In SpringBoard: state 2 = Blanked (screen off / AOD dim), state != 2 (0, etc.) = Active / Screen Awake!
     if (state == 2) {
         g_isScreenOff = YES;
-        if (pref_aodOptimize) {
-            stopTimer();
-        }
+        // 不停表：该回调可能晚于唤醒通知到达。
     } else {
         g_isScreenOff = NO;
         if (pref_enabled) {
@@ -726,6 +711,6 @@ static void onScreenUnblanked(CFNotificationCenterRef center, void *observer, CF
         );
         
         %init;
-        writeLog(">>> LSTimeSeconds %init finished <<<");
+        writeLog(">>> LSTimeSeconds %%init finished <<<");
     }
 }

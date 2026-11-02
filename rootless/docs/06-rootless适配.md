@@ -73,7 +73,7 @@ libobjc: readClass -> map_images -> dyld dlopen
 ## 三、构建
 
 ```bash
-wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-rootless/build.sh
+wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-rootless-min/build.sh
 ```
 
 流程：`make package`（rootless scheme，前缀 `/var/jb`）→ 解包 → 对
@@ -84,7 +84,7 @@ isa/superclass 认证）→ `ldid -S` 重签 → 统一权限 → 重新打包�
 产物：
 
 ```
-com.sini921.lstimeseconds_0.0.7-2_iphoneos-arm64.deb
+com.sini921.lstimeseconds_0.0.7-4_iphoneos-arm64.deb
 ```
 
 ## 四、静态验证结果
@@ -138,7 +138,42 @@ CSProminentTimeView didMoveToWindow: ON SCREEN
 2. 抓 Preferences 进程的 `.ips`（「设置 → 隐私与安全性 → 分析与改进 → 分析数据」）；
 3. 回退：在 Sileo 中卸载本包（rootless 版与 RootHide 版包名相同，不要同时装两个环境）。
 
-## 六、版本策略
+## 六、iOS 16 熄屏唤醒后秒数冻结（0.0.7-4）
+
+现象：iOS 16.0.3 上亮屏时秒数正常，熄屏再亮屏后时钟停在某一秒不再变化。
+
+日志特征（真机 `LSTimeSeconds.log`）：
+
+- 熄屏/唤醒期间出现大量 `onScreenBlanked` / `onScreenUnblanked` / `SBBacklightController state=2`；
+- 同一个时间点常见 **`state=2`（熄屏）晚于 `onScreenUnblanked`** 到达；
+- `stopTimer` / `startTimerIfNeeded` 反复交替。
+
+根因有两层：
+
+1. `timerTick` 以 `g_isScreenOff && pref_aodOptimize` 作为跳过条件。iOS 16 的
+   backlight / 锁屏通知顺序与 iOS 17 不同，迟到的 `state=2` 会把
+   `g_isScreenOff` 卡在 YES，计时器虽然在跑，但每秒都 early-return。
+2. 熄屏时视图被移出窗口，`unregisterActiveTimeView` 在集合为空时停表；
+   而 iOS 16 唤醒后不一定重发 `didMoveToWindow` / `viewWillAppear`，
+   新视图可能从未被注册，即使计时器在跑也没有可更新的对象。
+
+0.0.7-4 的修复（最小改动）：
+
+- `timerTick` **不再依据 `g_isScreenOff` 跳过刷新**，只在插件被关闭时停表；
+- 熄屏、背光 `state=2`、视图注销都**不再停止计时器**，避免“停了没人重启”；
+- 通知回调的线程模型、计时器创建方式保持与 0.0.7-2 完全一致，不引入
+  block 字面量、weak 控制器或每秒自愈。
+
+> 0.0.7-3 曾尝试“通知回调统一切主线程 + 每秒自愈”，在 iOS 16.0.3 上触发安全模式：
+> `runOnMain(^{...})` 的**全局 block** 被 ARC 在函数入口 retain，
+> block 的 isa 是 `__DATA_CONST,__const` 里到 `__NSConcreteGlobalBlock` 的
+> **plain bind**（clang19/ld64 未补 PAC），`objc_msgSend(block, "retain")`
+> 认证失败 → SIGBUS。崩溃寄存器 `x0 = 镜像+0xC218`（block）、`x1 = retain`、
+> `x14 = __NSConcreteGlobalBlock`。0.0.7-4 去掉了这部分，已真机验证。
+
+> 0.0.7-4 已在 iOS 16.0.3 真机验证：熄屏再亮屏秒数恢复、设置面板正常。
+
+## 七、版本策略
 
 与主仓库一致：**只把真机验证通过的构建放进越狱源**。
 本 rootless 包在通过 iOS 16/17 真机验证前，仅作为测试包，不更新 `https://chenlin8023.github.io/` 的索引。

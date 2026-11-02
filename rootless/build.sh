@@ -2,7 +2,7 @@
 # =============================================================================
 #  LSTimeSeconds rootless 构建脚本（在 WSL / Linux 下运行）
 #
-#    wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-rootless/build.sh
+#    wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-github/rootless-min/build.sh
 #
 #  与 roothide 版的区别：
 #    · 安装前缀 = /var/jb（Theos rootless scheme），包架构 iphoneos-arm64；
@@ -19,8 +19,8 @@ set -u
 export THEOS="$HOME/theos"
 export PATH="$THEOS/bin:$PATH"
 
-SRC=/mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-rootless
-DST="$HOME/lsts_rootless_build"
+SRC=/mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-github/rootless
+DST="$HOME/lsts_rootless_min_build"
 TC19="$HOME/tc19/linux/iphone/bin"
 
 die() { echo "!! $*"; exit 1; }
@@ -77,7 +77,7 @@ find "$DST/repack/var/jb" -type d -exec chmod 755 {} +
 find "$DST/repack/var/jb" -type f ! -path "$PREFS" ! -path "$DYLIB" -exec chmod 644 {} +
 
 echo "=== 打包 ==="
-FINAL_DEB="$SRC/com.sini921.lstimeseconds_0.0.7-2_iphoneos-arm64.deb"
+FINAL_DEB="$SRC/com.sini921.lstimeseconds_0.0.7-4_iphoneos-arm64.deb"
 rm -f "$FINAL_DEB"
 dpkg-deb -b -Zxz "$DST/repack" "$FINAL_DEB" || die "dpkg-deb -b 失败"
 
