@@ -2,7 +2,7 @@
 # =============================================================================
 #  LSTimeSeconds rootless 构建脚本（在 WSL / Linux 下运行）
 #
-#    wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-github/rootless-min/build.sh
+#    wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/iOS-Tweaks/LSTimeSeconds/rootless/build.sh
 #
 #  与 roothide 版的区别：
 #    · 安装前缀 = /var/jb（Theos rootless scheme），包架构 iphoneos-arm64；
@@ -19,7 +19,7 @@ set -u
 export THEOS="$HOME/theos"
 export PATH="$THEOS/bin:$PATH"
 
-SRC=/mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-github/rootless
+SRC=/mnt/d/WorkBudy/iOS-Tweaks/LSTimeSeconds/rootless
 DST="$HOME/lsts_rootless_5_build"
 TC19="$HOME/tc19/linux/iphone/bin"
 

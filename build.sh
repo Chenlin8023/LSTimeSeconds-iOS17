@@ -2,7 +2,7 @@
 # =============================================================================
 #  LSTimeSeconds 构建脚本（在 WSL / Linux 下运行）
 #
-#    wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-github/build.sh
+#    wsl -d Ubuntu-22.04 -- bash /mnt/d/WorkBudy/iOS-Tweaks/LSTimeSeconds/build.sh
 #
 #  =============================================================================
 #  构建说明
@@ -26,7 +26,7 @@ set -u
 export THEOS="$HOME/theos"
 export PATH="$THEOS/bin:$PATH"
 
-SRC=/mnt/d/WorkBudy/Bioprotect/LSTimeSeconds-github
+SRC=/mnt/d/WorkBudy/iOS-Tweaks/LSTimeSeconds
 DST="$HOME/lsts_github_build"
 TC19="$HOME/tc19/linux/iphone/bin"
 
@@ -136,7 +136,7 @@ chmod 644 "$BNDLDIR/Root.plist" "$BNDLDIR/Info.plist"
 chmod -R 755 "$BNDLDIR"/*.lproj 2>/dev/null || true
 
 echo "=== 打包 ==="
-FINAL_DEB="$SRC/com.sini921.lstimeseconds_0.0.7-1_iphoneos-arm64e.deb"
+FINAL_DEB="$SRC/com.sini921.lstimeseconds.roothide_0.0.7-1_iphoneos-arm64e.deb"
 rm -f "$FINAL_DEB"
 dpkg-deb -b -Zxz "$DST/repack" "$FINAL_DEB" || die "dpkg-deb -b 失败"
 
