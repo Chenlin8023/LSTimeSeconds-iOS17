@@ -1,5 +1,5 @@
-Package: com.sini921.lstimeseconds
-Name: LSTimeSeconds
+Package: com.sini921.lstimeseconds.roothide
+Name: LSTimeSeconds (RootHide)
 Version: 0.0.7-1
 Architecture: iphoneos-arm64e
 Section: Tweaks
@@ -7,7 +7,8 @@ Priority: optional
 Maintainer: Chenlin8023
 Author: b4db1r3 & SINI
 Depends: mobilesubstrate, preferenceloader
+Conflicts: com.sini921.lstimeseconds
 Description: 锁屏时钟显示实时秒数，支持字号缩放与上下位置调节。
- 时间格式跟随设备 12/24 小时制；长按进入壁纸编辑不受影响。
- 不支持全天候显示（AOD）暗屏走秒，亮屏时即时走秒。
- 原生 roothide arm64e。
+ 实机验证：iPhone 15 Pro / iOS 17.2.1（RootHide，arm64e）。
+ 项目仓库：https://github.com/Chenlin8023/LSTimeSeconds-iOS17
+ 独立 RootHide 包；从旧 Package ID 升级需先卸载旧包，prefs 设置保留。

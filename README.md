@@ -21,6 +21,21 @@
 > `libobjc readClass` 认证失败 → SIGBUS。修复与验证方法见
 > [`rootless/docs/06-rootless适配.md`](rootless/docs/06-rootless适配.md)。
 
+### 两个 Package ID（2026-11-06 起）
+
+为了让 RootHide 与 rootless 不再共用同一个包名、避免客户端把最高版本误当成 RootHide 包，
+源里拆成两个独立包：
+
+| 形态 | Package ID | 当前版本 | 架构 |
+|---|---|---|---|
+| RootHide | `com.sini921.lstimeseconds.roothide` | `0.0.7-1` | `iphoneos-arm64e` |
+| rootless | `com.sini921.lstimeseconds` | `0.0.7-5` | `iphoneos-arm64`（`/var/jb`） |
+
+- 两个包互相 `Conflicts`，不能共存。
+- **RootHide 从旧包升级**：先卸载旧的 `com.sini921.lstimeseconds`，再安装
+  `LSTimeSeconds (RootHide)`；prefs 域仍是 `com.b4db1r3.lstsprefs`，设置可保留。
+- rootless 用户继续升级 `com.sini921.lstimeseconds`，不需要换包。
+
 ### rootless 版本（iOS 16–17 / `/var/jb`）
 
 本仓库新增 [`rootless/`](rootless/README.md)：同一份功能源码的 rootless 构建，
@@ -32,7 +47,7 @@
   也不在熄屏/视图注销时停止计时器；
 - `0.0.7-5` 增加日志 256KB 轮转与秒针对齐整秒，刷新/停表逻辑不变；
 - 源码、构建脚本、arm64e PAC 补丁器都在 `rootless/`；
-- RootHide 用户继续使用上面的 `0.0.7-1` 原生包，不要混装。
+- RootHide 用户请使用上面的 `com.sini921.lstimeseconds.roothide`，不要与本包混装。
 
 ---
 
@@ -75,7 +90,8 @@
 
 **本版本不支持在 AOD 暗屏状态下持续走秒。** 原因不是代码写错了：
 
-- iPhone 进入 AOD 后，ProMotion LTPO 屏幕的物理刷新率被底层驱动锁到 **1 Hz**；
+- iPhone 进入 AOD 后，系统通过 `BacklightServicesHost` 把呈现策略降到 **1 Hz**
+  （这是 iOS 的功耗策略，不是不可绕过的硬件锁；但应用层同样改不了显示管线）；
 - iOS 17 的 `BacklightServicesHost` / `BLSHAlwaysOnPresentationEngine` 会用
   Flipbook 机制**提前定格画面**并抑制常规界面重绘，普通定时器推进的 UI 更新在暗屏期间
   根本不会被渲染，直到分针满 60 秒触发一次全局刷新。
@@ -83,6 +99,10 @@
 因此 AOD 暗屏下插件会主动暂停刷新（省电且避免无效唤醒），**点亮屏幕瞬间立即接上真实秒数**。
 我们做过一个用 GCD Mach 定时器 + `CATransaction flush` 强行提交帧的实验分支，在真机上
 仍无法稳定穿透该限制，故未作为正式功能发布。
+
+> 待机显示（StandBy）另有一条可行路径：iOS 17 的 Digital 表盘默认按分钟更新，
+> 但**亮屏 StandBy 下系统允许实时刷新**，可以用 1Hz 驱动做到秒级；变暗/夜间仍受
+> 同一套 Flipbook 限制。详见 [`docs/06-待机显示与全天候显示可行性.md`](docs/06-待机显示与全天候显示可行性.md)。
 
 ---
 
